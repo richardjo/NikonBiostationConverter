@@ -15,13 +15,24 @@ def retrieve_metadata(csv_file_path):
     position_y_list (array): An array of y positions for each image file.
     """
 
-    #Removes whitespace characters
+    #Formats CSV for data importing
     with open(csv_file_path,encoding="utf16") as csv_file:
+        #Removes whitespace characters
         for line in csv_file:
             line = line.strip
+            if "Width" in line:
+                #Obtains row and column dimensions for stitching
+                rows = str(line)[-1]
+                #Removes header
+                line = ""
+            elif "Height" in line:
+                columns = str(line)[-1]
+                line = ""
+            else:
+                line = ""
     
     #Converts csv into Pandas Datafile for easy data manipulation
-    csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16")
+    csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False)
 
     #Obtains list of image files
     image_file_list = csv_dataFile["File Name"].values
@@ -61,7 +72,7 @@ def retrieve_metadata(csv_file_path):
 
         delta_T = int(delta_T.seconds)
 
-    return image_file_list, position_x_list, position_y_list, magnification_list, delta_T
+    return image_file_list, position_x_list, position_y_list, magnification_list, delta_T, rows, columns
 
 def convert(input_file_path, output_file_path, bf_tools_directory):
     """Converts an image file to the OME Tiff format.
@@ -80,8 +91,8 @@ def save_metadata(input_file_path, position_x, position_y, magnification, delta_
     output_file_path (str): The absolute path of the XML file with the metadata being inserted into the OME Tiff.
     """
 
-    #Runs BIOFORMATS command line script to obtain existing XML in an OME Tiff file
-    output = subprocess.Popen([bf_tools_directory+"/tiffcomment", input_file_path], stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+    #Runs BIOFORMATS command line script to obtain existing XML in a converted OME Tiff file
+    output = subprocess.Popen([bf_tools_directory + "/tiffcomment", input_file_path], stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
     raw_xml = output.communicate()
 
     #Removes special characters from raw XML file
@@ -99,6 +110,7 @@ def save_metadata(input_file_path, position_x, position_y, magnification, delta_
     ET.SubElement(XML_root, "Instrument", {"ID": "https://cam.facilities.northwestern.edu/instruments/"})
     ET.SubElement(XML.find("Instrument"), "Objective", {"CalibratedMagnification": str(magnification), "ID":"https://cam.facilities.northwestern.edu/instruments/"})
     ET.SubElement(XML.find("Instrument"), "Microscope", {"Manufacturer":"Nikon", "Model":"Nikon Biostation CT"})
+    
     #Writes position and time metadata
     if delta_T != None:
         ET.SubElement(XML_root[0][0], "Plane", {"DeltaT":str(delta_T), "TheC": "0", "TheT":"0", "TheZ":"0", "PositionX":str(position_x), "PositionY":str(position_y)})
@@ -121,9 +133,15 @@ def save_metadata(input_file_path, position_x, position_y, magnification, delta_
     if magnification == 40:
          XML_root[0][0].set("PhysicalSizeX",str(0.200))
          XML_root[0][0].set("PhysicalSizeY",str(0.200))
+    
     #Saves it
     XML.write(xml_file_path,short_empty_elements=False)
 
-    #Rusn BIOFORMATS command line script to save new XML into an OME Tiff file
+    #Runs BIOFORMATS command line script to save new XML into the OME Tiff file
     subprocess.run([bf_tools_directory+"/tiffcomment", "-set", xml_file_path, input_file_path])
 
+def stitching(input_file_path, rows, columns):
+    index = input_file_path.find("T")
+    element_number = str((int(input_file_path[index+5:index+6])-1)*columns + int(input_file_path[index+8:index+9]))
+    renamed_file_path = r"tile_{" + element_number + r"}"
+    return renamed_file_path
