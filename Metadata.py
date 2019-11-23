@@ -2,37 +2,31 @@ import subprocess
 import pandas as pd
 from xml.etree import ElementTree as ET
 import datetime
+from pathlib import Path
 ET.register_namespace('', 'http://www.openmicroscopy.org/Schemas/OME/2016-06')
 
-def retrieve_metadata(csv_file_path):
+def retrieve_metadata(csv_file_path, use_stitching):
     """Retrieves image metadata from a CSV file
     Parameters:
-    csv_file_path (str): The absolute path of the CSV file.
+    csv_file_path (str): The absolute path of a CSV file.
 
     Returns:
     image_file_list (array): An array of image file names.
     position_x_list (array): An array of x positions for each image file.
     position_y_list (array): An array of y positions for each image file.
     """
-
     #Formats CSV for data importing
     with open(csv_file_path,encoding="utf16") as csv_file:
         #Removes whitespace characters
         for line in csv_file:
-            line = line.strip
-            if "Width" in line:
-                #Obtains row and column dimensions for stitching
+            line = line.strip()
+            if "Width" in str(line):
                 rows = str(line)[-1]
-                #Removes header
-                line = ""
-            elif "Height" in line:
+            if "Height" in str(line):
                 columns = str(line)[-1]
-                line = ""
-            else:
-                line = ""
-    
+
     #Converts csv into Pandas Datafile for easy data manipulation
-    csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False)
+    csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False, header = 4)
 
     #Obtains list of image files
     image_file_list = csv_dataFile["File Name"].values
@@ -53,7 +47,7 @@ def retrieve_metadata(csv_file_path):
         time_list = csv_dataFile["Time Stamp"].values
         
         #Calculates delta T
-        #If the list is longer than two values, it indexes the 2nd and 3rd values for higher accuracy
+        #If the list is longer than two values, it indexes the second and third values for higher accuracy
         [hour1, minute1] = (time_list[1])[-5:].split(":")
         [hour2, minute2] = (time_list[2])[-5:].split(":")
 
@@ -64,7 +58,7 @@ def retrieve_metadata(csv_file_path):
     elif len(time_list) > 1:
         time_list = csv_dataFile["Time Stamp"].values
         
-        #Calculates delta T
+        #Calculates delta T for a shorter list with only two values.
         [hour1, minute1] = (time_list[0])[-5:].split(":")
         [hour2, minute2] = (time_list[1])[-5:].split(":")
 
@@ -79,6 +73,7 @@ def convert(input_file_path, output_file_path, bf_tools_directory):
     Parameters:
     input_file_path (str): The absolute path of the input file.
     output_file_path (str): The absolute path of the converted output file in the OME Tiff format.
+    bf_tools_directory (str): The absolute path of the bioformats command line tools.
     """
 
     #Runs BIOFORMATS command line script to convert input files into output files
@@ -88,7 +83,12 @@ def save_metadata(input_file_path, position_x, position_y, magnification, delta_
     """Saves metadata from an XML file into an OME Tiff
     Parameters:
     input_file_path (str): The absolute path of the input OME Tiff file.
-    output_file_path (str): The absolute path of the XML file with the metadata being inserted into the OME Tiff.
+    position_x (str): The x-axis position of the input OME Tiff file.
+    position_y (str): The y-axis position of the input OME Tiff file.
+    magnification (str): The objective magnification of the input OME Tiff file.
+    delta_T (str): The difference in time between adjacent input OME Tiff files.
+    xml_file_path (str): The absolute path of the xml_file containing corresponding metadata for the OME Tiff file.
+    bf_tools_directory (str): The absolute path of the bioformats command line tools.
     """
 
     #Runs BIOFORMATS command line script to obtain existing XML in a converted OME Tiff file
@@ -141,7 +141,16 @@ def save_metadata(input_file_path, position_x, position_y, magnification, delta_
     subprocess.run([bf_tools_directory+"/tiffcomment", "-set", xml_file_path, input_file_path])
 
 def stitching(input_file_path, rows, columns):
+    """Renames files for stitching in FIJI
+    Parameters:
+    input_file_path(str): Absolute path of the input OME Tiff file.
+    rows(str): Number of rows in each "cell".
+    columns(str): Number of columns in each "cell".
+    """
     index = input_file_path.find("T")
-    element_number = str((int(input_file_path[index+5:index+6])-1)*columns + int(input_file_path[index+8:index+9]))
-    renamed_file_path = r"tile_{" + element_number + r"}"
+    element_number = (int(input_file_path[index+5:index+6]) - 1) * int(columns) + int(input_file_path[index+8:index+9])
+    element_number = str(element_number)
+    if len(element_number) == 1:
+        element_number = "0" + element_number
+    renamed_file_path = r"tile_" + element_number
     return renamed_file_path

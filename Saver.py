@@ -10,24 +10,28 @@ output_directory = Path("/Users/richardjo/Desktop/BioStationData/MyDataOutput")
 use_output_directory = True
 use_stitching = True
 
-def metadata_retriever ():
+def metadata_retriever (directory):
     """Parses folder structor of the "home directory" to find metadata to be saved"""
+    
+    FSO_list = [str(x) for x in directory.iterdir()]
 
-    for directory in home_directory.iterdir():
-        directory_path = str(directory)
+    for FSO in FSO_list:
+        if "micro.csv" in str(FSO):
+            csv_path = str(directory / "micro.csv")
+            [image_file_list, position_x_list, position_y_list, magnification_list, delta_T, rows, columns] = retrieve_metadata(csv_path, use_stitching)
+            metadata_saver(image_file_list, position_x_list, position_y_list, magnification_list, delta_T, directory, rows, columns)
+            return
+
+    for directory_path in FSO_list:
         if ".DS_Store" in directory_path:
             continue
-        if "_macros" in directory_path:
+        elif "_macros" in directory_path:
             continue
-        if "_headerfiles" in directory_path:
+        elif "_headerfiles" in directory_path:
             continue
-        for sub_directory in directory.iterdir():
-            csv_path = str(sub_directory / "micro.csv")
-            if ".DS_Store" in csv_path:
-                continue
-            else:
-                [image_file_list, position_x_list, position_y_list, magnification_list, delta_T, rows, columns] = retrieve_metadata(csv_path)
-                metadata_saver(image_file_list, position_x_list, position_y_list, magnification_list, delta_T, sub_directory, rows, columns)
+        else:
+            directory_path = Path(directory_path)
+            metadata_retriever(directory_path)
 
 def metadata_saver (image_file_list, position_x_list, position_y_list, magnification_list, delta_T, sub_directory, rows, columns):
     """Converts a list of files to OME Tiff and stores metadata in them
@@ -64,5 +68,5 @@ def metadata_saver (image_file_list, position_x_list, position_y_list, magnifica
         #Saves metadata
         save_metadata(output_tiff_path,position_x_list[index][0], position_y_list[index][0], magnification_list[index][0], delta_T, xml_path, bf_tools_directory)
 
-metadata_retriever()
+metadata_retriever(home_directory)
 
