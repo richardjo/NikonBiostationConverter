@@ -3,7 +3,6 @@ import pandas as pd
 from xml.etree import ElementTree as ET
 import datetime
 from pathlib import Path
-import numpy as np
 
 ET.register_namespace('', 'http://www.openmicroscopy.org/Schemas/OME/2016-06')
 
@@ -26,9 +25,9 @@ def retrieve_metadata(csv_file_path, use_stitching):
         for line in csv_file:
             line = line.strip()
             if "Width" in str(line):
-                rows = str(line)[-1]
+                rows = str(line)[-2]
             if "Height" in str(line):
-                columns = str(line)[-1]
+                columns = str(line)[-2]
 
     #Converts csv into Pandas Datafile for easy data manipulation
     if use_stitching == True:
@@ -46,16 +45,29 @@ def retrieve_metadata(csv_file_path, use_stitching):
     #Obtains list of magnification values
     magnification_list = csv_dataFile["Magnification"].values
 
-    #Obtains list of time values
-    time_list = csv_dataFile["Time Stamp"].values
-    delta_T_list = np.array([0])
-    
-    if len(time_list) > 1:
-        for x in range(0,length(time_list)-1):
-            [hour1, minute1] = (time_list[x])[-5:].split(":")
-            [hour2, minute2] = (time_list[x+1])[-5:].split(":")
+    #Obtains list of delta time values
+
+    delta_T_list = [0]
+
+    if len(image_file_list) > 1:
+        for x in range(0,len(image_file_list)-1):
+            hour1 = (image_file_list[x])[7:9]
+            minute1 = (image_file_list[x])[9:11]
+            hour2 = (image_file_list[x+1])[7:9]
+            minute2 = (image_file_list[x+1])[9:11]
+            
+            #Removes leading zeros from time values
+            if hour1[0] == 0:
+                hour1 = [1]
+            if hour2[0] == 0:
+                hour2 = [1]
+            if minute1[1] == 0:
+                minute1 = [1]
+            if minute2[1] == 0:
+                minute2 = [1]
+
             delta_T = datetime.timedelta(hours = int(hour2), minutes = int(minute2)) - datetime.timedelta(hours = int(hour1),minutes = int(minute1))
-            delta_T.append(int(delta_T.seconds))
+            delta_T_list.append(int(delta_T.seconds))
 
     return image_file_list, position_x_list, position_y_list, magnification_list, delta_T_list, rows, columns
 
@@ -138,7 +150,7 @@ def stitching(input_file_path, rows, columns):
     rows(str): Number of rows in each "cell".
     columns(str): Number of columns in each "cell".
     """
-    
+
     index = input_file_path.find("T")
     element_number = (int(input_file_path[index+5:index+6]) - 1) * int(columns) + int(input_file_path[index+8:index+9])
     element_number = str(element_number)
