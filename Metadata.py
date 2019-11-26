@@ -3,6 +3,8 @@ import pandas as pd
 from xml.etree import ElementTree as ET
 import datetime
 from pathlib import Path
+import numpy as np
+
 ET.register_namespace('', 'http://www.openmicroscopy.org/Schemas/OME/2016-06')
 
 def retrieve_metadata(csv_file_path, use_stitching):
@@ -44,35 +46,18 @@ def retrieve_metadata(csv_file_path, use_stitching):
     #Obtains list of magnification values
     magnification_list = csv_dataFile["Magnification"].values
 
-    delta_T = None
-
     #Obtains list of time values
     time_list = csv_dataFile["Time Stamp"].values
+    delta_T_list = np.array([0])
     
-    if len(time_list) > 2:
-        time_list = csv_dataFile["Time Stamp"].values
-        
-        #Calculates delta T
-        #If the list is longer than two values, it indexes the second and third values for higher accuracy
-        [hour1, minute1] = (time_list[1])[-5:].split(":")
-        [hour2, minute2] = (time_list[2])[-5:].split(":")
+    if len(time_list) > 1:
+        for x in range(0,length(time_list)-1):
+            [hour1, minute1] = (time_list[x])[-5:].split(":")
+            [hour2, minute2] = (time_list[x+1])[-5:].split(":")
+            delta_T = datetime.timedelta(hours = int(hour2), minutes = int(minute2)) - datetime.timedelta(hours = int(hour1),minutes = int(minute1))
+            delta_T.append(int(delta_T.seconds))
 
-        delta_T = datetime.timedelta(hours = int(hour2), minutes = int(minute2)) - datetime.timedelta(hours = int(hour1),minutes = int(minute1))
-
-        delta_T = int(delta_T.seconds)
-
-    elif len(time_list) > 1:
-        time_list = csv_dataFile["Time Stamp"].values
-        
-        #Calculates delta T for a shorter list with only two values.
-        [hour1, minute1] = (time_list[0])[-5:].split(":")
-        [hour2, minute2] = (time_list[1])[-5:].split(":")
-
-        delta_T = datetime.timedelta(hours = int(hour2), minutes = int(minute2)) - datetime.timedelta(hours = int(hour1),minutes = int(minute1))
-
-        delta_T = int(delta_T.seconds)
-
-    return image_file_list, position_x_list, position_y_list, magnification_list, delta_T, rows, columns
+    return image_file_list, position_x_list, position_y_list, magnification_list, delta_T_list, rows, columns
 
 def convert(input_file_path, output_file_path, bf_tools_directory):
     """Converts an image file to the OME Tiff format.
@@ -153,6 +138,7 @@ def stitching(input_file_path, rows, columns):
     rows(str): Number of rows in each "cell".
     columns(str): Number of columns in each "cell".
     """
+    
     index = input_file_path.find("T")
     element_number = (int(input_file_path[index+5:index+6]) - 1) * int(columns) + int(input_file_path[index+8:index+9])
     element_number = str(element_number)

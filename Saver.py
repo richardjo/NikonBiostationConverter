@@ -33,7 +33,7 @@ def metadata_retriever (directory):
             directory_path = Path(directory_path)
             metadata_retriever(directory_path)
 
-def metadata_saver (image_file_list, position_x_list, position_y_list, magnification_list, delta_T, sub_directory, rows, columns):
+def metadata_saver (image_file_list, position_x_list, position_y_list, magnification_list, delta_T_list, sub_directory, rows, columns):
     """Converts a list of files to OME Tiff and stores metadata in them
     Parameters: file_names
     file_names (array): List of image files to be converted
@@ -66,7 +66,7 @@ def metadata_saver (image_file_list, position_x_list, position_y_list, magnifica
         index = np.where(image_file_list == str(file))[0]
 
         #Saves metadata
-        save_metadata(output_tiff_path,position_x_list[index][0], position_y_list[index][0], magnification_list[index][0], delta_T, xml_path, bf_tools_directory)
+        save_metadata(output_tiff_path,position_x_list[index], position_y_list[index], magnification_list[index], delta_T_list[index], xml_path, bf_tools_directory)
 
 metadata_retriever(home_directory)
 
