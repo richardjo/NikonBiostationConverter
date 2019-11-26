@@ -8,7 +8,7 @@ home_directory = Path("/Users/richardjo/Desktop/BioStationData/MyData")
 bf_tools_directory = "/Users/richardjo/downloads/bftools"
 output_directory = Path("/Users/richardjo/Desktop/BioStationData/MyDataOutput")
 use_output_directory = True
-use_stitching = True
+use_stitching = False
 
 def metadata_retriever (directory):
     """Parses folder structor of the "home directory" to find metadata to be saved"""

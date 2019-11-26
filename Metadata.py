@@ -15,6 +15,9 @@ def retrieve_metadata(csv_file_path, use_stitching):
     position_x_list (array): An array of x positions for each image file.
     position_y_list (array): An array of y positions for each image file.
     """
+    rows = None
+    columns = None
+    
     #Formats CSV for data importing
     with open(csv_file_path,encoding="utf16") as csv_file:
         #Removes whitespace characters
@@ -26,7 +29,10 @@ def retrieve_metadata(csv_file_path, use_stitching):
                 columns = str(line)[-1]
 
     #Converts csv into Pandas Datafile for easy data manipulation
-    csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False, header = 4)
+    if use_stitching == True:
+        csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False, header = 4)
+    else:
+        csv_dataFile = pd.read_csv(csv_file_path, delimiter = "	", encoding = "utf-16", error_bad_lines=False)
 
     #Obtains list of image files
     image_file_list = csv_dataFile["File Name"].values
