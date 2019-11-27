@@ -28,6 +28,7 @@ def retrieve_metadata(csv_file_path, use_stitching):
                 rows = str(line)[-2]
             if "Height" in str(line):
                 columns = str(line)[-2]
+                break
 
     #Converts csv into Pandas Datafile for easy data manipulation
     if use_stitching == True:
@@ -51,10 +52,11 @@ def retrieve_metadata(csv_file_path, use_stitching):
 
     if len(image_file_list) > 1:
         for x in range(0,len(image_file_list)-1):
-            hour1 = (image_file_list[x])[7:9]
-            minute1 = (image_file_list[x])[9:11]
-            hour2 = (image_file_list[x+1])[7:9]
-            minute2 = (image_file_list[x+1])[9:11]
+            index = image_file_list[x].find("_")
+            hour1 = (image_file_list[x])[index+1:index+3]
+            minute1 = (image_file_list[x])[index+3:index+5]
+            hour2 = (image_file_list[x+1])[index+1:index+3]
+            minute2 = (image_file_list[x+1])[index+3:index+5]
             
             #Removes leading zeros from time values
             if hour1[0] == 0:
