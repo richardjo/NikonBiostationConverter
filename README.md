@@ -14,7 +14,7 @@ As of now, the current iteration of the project supports:
  - Processing of images for stitching.
  - Outputting of images to a desired output directory with different folders to indicate separate time points.
 
-[Imgur](https://i.imgur.com/SXR9w85.jpg)
+![Imgur](https://i.imgur.com/SXR9w85.jpg)
 
 This project was completed under the guidance of Dr. David Kirchenbuechler and Dr. Dina Arvanitis at The Center of Advanced Microscopy at Northwestern's Feinberg School of Medicine.
 
@@ -52,7 +52,7 @@ Option 2 (Easier, slower performance)
  3. Choose whether stitching is required or not. If stitching is not selected and the input images are tiled, the data files will not be read correctly, regardless if renaming of the files is desired.
  4. Click the convert button. Once the conversion process is completed, the "spinning beach bubble" will disappear. Again, be patient - this process can take a very long time, especially for a large image/dataset.
 
-[Imgur](https://i.imgur.com/gvtGLUT.png)
+![Imgur](https://i.imgur.com/gvtGLUT.png)
 
 © Richard Jo
 
