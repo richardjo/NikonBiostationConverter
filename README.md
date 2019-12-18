@@ -14,7 +14,7 @@ As of now, the current iteration of the project supports:
  - Processing of images for stitching.
  - Outputting of images to a desired output directory with different folders to indicate separate time points.
 
-![Tiling](https://lh3.googleusercontent.com/fGrshO5wHH6nf9eh3f0BoqPl6BcsBreHtQb4Xf5k7UPNqp54JpQmxj9NaXQNGw61yocUMRBpgHGTvDhwp_HmHJqILJdDNRUxcxaQxA777H_69eYJnNlykJF2G5GwHIP3j234a97KQc-TrTAMrttN_3I3nyob0Zib763jr-25aJ2D8gycTzm6hDHCY8TcqpgUorfHUPBaASfSYO1kfWNWxR30MXKAtMFwRQ48caVsJBqQQbiMtmNi6StjIAqDEyvUa8X27_YnbTaQkeuS_ZjijFX9DlYkoNYR3xBVUc1R_Z5Wy2GjT3EODrRqi7k3-pQs9WwEdQeBjUIbltUTwr-isJ5RiwX9kJCvujI1V8gwYGn1MTJweg36EgYS3M4iz3EZ_EcNBw4Vjrl8SI5CvNsxk9tN0k9vHYCoXMCmJvV-32pvLFZyEDi9i5T9-eyzfFl7Is8CMtA87OayiJ5tOcNVO2BM2JldlwemXu2rlAVh45kxsFbNjLlsVpppXNiIyiZIhU5SrZmNSMRtxPXzCxReYAlYX82QYQv-OzEltPsMrZZVdvY6rzcgHgde9sXM2soE_DRZ6e5ZRhTGAddOq-h3eaAUYN69dcctShemu02kFTW3uec--wnnLAX10q9XvikFZB3vMNhtYDtn_x1uRgSymgxsgwUw2GlsOIJlFgRIOHB-KnWIdeBO=w770-h573-no)
+![Tiling](https://imgur.com/SXR9w85)
 
 This project was completed under the guidance of Dr. David Kirchenbuechler and Dr. Dina Arvanitis at The Center of Advanced Microscopy at Northwestern's Feinberg School of Medicine.
 
