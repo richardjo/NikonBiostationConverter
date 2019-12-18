@@ -44,7 +44,7 @@ Option 1 (Harder, better performance)
 Option 2 (Easier, slower performance)
 
  1. `git clone <url-of-the-project>` or alternatively, download the repository directly from the GitHub site.
- 2. Navigate to the "dist" folder in the download, run the executable and then click on the actual application. Be patient - this process can take a long time.
+ 2. Navigate to the "dist" folder in the download, run the executable and then click on the actual application. Be patient - this process can take a long time (this feature has not been completed yet).
 
 **Operation**
  1. Locate the directory containing input images using the dropdown menu.
