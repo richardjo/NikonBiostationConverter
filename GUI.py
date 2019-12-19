@@ -16,7 +16,7 @@ def output_directory_retriever():
 def bf_directory_retriever():
     global bf_directory 
     bf_directory = filedialog.askdirectory()
-    bf_directory_entry.insert(0,str(output_directory))
+    bf_directory_entry.insert(0,str(bf_directory))
 
 
 root = tk.Tk()
