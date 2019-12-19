@@ -2,7 +2,7 @@
 
 ## Introduction
 This project takes files outputted by the Nikon Biostation CT microscope, 
-converts the image files (png) into the open source OME image format and writes metadata from the data files (csv) to the image files (ome.tiff). Files can also be renamed in order to support Fiji's ([https://fiji.sc/](https://fiji.sc/)) stitching plug-in.
+converts the image files in a png format into the open source ome.tiff image format and writes metadata from the csv data files to the image files. Files can also be renamed in order to support Fiji's ([https://fiji.sc/](https://fiji.sc/)) stitching plug-in.
 
 The program makes use of existing command line tools, provided by the Open Microscopy Environment (OME), which can convert and write data to the ome.tiff format. The program includes a rudimentary GUI using the Tkinter library in order to make the operation of the program easier for imaging specialists without experience in the computer science field. 
 
