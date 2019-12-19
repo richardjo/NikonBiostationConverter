@@ -33,6 +33,7 @@ Packages
  - GUI: tkinter
 
 Bioformats Command Line Tools: [https://www.openmicroscopy.org/bio-formats/downloads/](https://www.openmicroscopy.org/bio-formats/downloads/)
+
 "This work is derived in part from the OME specification. Copyright (C) 2002-2016 Open Microscopy Environment"
 
 ## Installation/Operation
