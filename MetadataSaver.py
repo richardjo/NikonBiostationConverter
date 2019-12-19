@@ -15,7 +15,7 @@ def metadata_saver(home_directory, output_directory, bf_tools_directory, use_sti
     position_y_values_lists = rt_metadata.position_y_lists
 
     for index in range(0,len(image_file_lists)):
-        ct_metadata = MetadataSaver(image_file_lists[index], output_directory = output_directory, use_stitching = use_stitching, position_x_list = position_x_values_lists[index], position_y_list = position_y_values_lists[index], 
+        ct_metadata = MetadataSaver(image_file_lists[index], output_directory = output_directory, use_stitching = use_stitching, well = index, position_x_list = position_x_values_lists[index], position_y_list = position_y_values_lists[index], 
         magnification_list=magnification_values_lists[index], delta_T_list = delta_T_lists[index], rows = rt_metadata.rows, columns = rt_metadata.columns)
         ct_metadata.convert(bf_tools_directory)
         ct_metadata.magnification_metadata()

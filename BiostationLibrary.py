@@ -119,12 +119,13 @@ class MetadataRetriever:
             self.delta_T_lists.append(delta_T_list)
 
 class MetadataSaver:
-    def __init__(self, image_file_list, output_directory, use_stitching, position_x_list=[], position_y_list=[], magnification_list=[], 
+    def __init__(self, image_file_list, output_directory, use_stitching, well, position_x_list=[], position_y_list=[], magnification_list=[], 
     delta_T_list=[],rows=None, columns=None):
         
         self.input_image_path_list = []
         self.output_image_path_list = []
         self.xml_path_list = []
+        self.well = well
 
         self.position_x_list = position_x_list
         self.position_y_list = position_y_list
@@ -152,8 +153,8 @@ class MetadataSaver:
             if delta_T_list[index] > 0:
                 self.time_counter += 1
             
-            output_directory = Path(self.output_directory) / Path(str(self.time_counter))
-            output_file_path = Path(self.output_directory) / Path(str(self.time_counter)) / Path(Path(input_file_path).name)
+            output_directory = Path(self.output_directory) / Path(str(self.well)) / Path(str(self.time_counter))
+            output_file_path = Path(self.output_directory) / Path(str(self.well)) / Path(str(self.time_counter)) / Path(Path(input_file_path).name)
 
             if not os.path.exists(str(output_directory)):
                 os.makedirs(str(output_directory))
