@@ -22,6 +22,7 @@ This project was completed under the guidance of Dr. David Kirchenbuechler and D
 **Prerequisites**
 
 Python 3
+Java Runtime Environment (JRE)
 
 Packages
  - Data Analysis/Manipulation: ElementTree, pandas, numpy
