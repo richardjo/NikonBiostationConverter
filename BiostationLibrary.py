@@ -23,6 +23,7 @@ elif platform == "Windows":
 class MetadataRetriever:
 
     def __init__(self):
+
         self.micro_csv_lists = []
         self.csv_dataFile_lists = []
 
@@ -30,13 +31,18 @@ class MetadataRetriever:
         self.exclusive_image_file_lists = []
         self.position_x_lists = []
         self.position_y_lists = []
-        self.magnification_values_lists = []
+        self.magnification_lists = []
         self.delta_T_lists = []
+        self.channels_lists = []
 
         self.rows = 0
         self.columns = 0
 
-    def retrieve_files(self, home_directory):
+    def retrieve_files(self, home_directory, use_channels):
+        
+        self.use_channels = use_channels
+        
+        #Recurses through image list to obtain a list of csv files to obtain data from.
         home_directory = Path(home_directory)
 
         for fso in home_directory.iterdir():
@@ -50,10 +56,16 @@ class MetadataRetriever:
             fso = str(fso)
             if ".DS_Store" in fso:
                 continue
+            if self.use_channels and ("$" in str(Path(fso).stem)):
+                self.retrieve_files(fso, use_channels)
+            if self.use_channels and (not "FL" in str(Path(fso).stem)):
+                continue
             else:
-                self.retrieve_files(fso)
+                self.retrieve_files(fso, use_channels)
     
     def csv_formatting(self,use_stitching):
+
+    #Formats and stores csv data.
         for csv_file in self.micro_csv_lists:
         
             with open(csv_file,encoding="utf16") as csv:
@@ -77,17 +89,21 @@ class MetadataRetriever:
             file_name_list = csv_dataFile["File Name"].values
             self.exclusive_image_file_lists.append(file_name_list)
             directory_name = Path(self.micro_csv_lists[index]).parent
-            file_name_list = [str(directory_name / Path(file_name)) for file_name in file_name_list]
+            file_name_list = [str(directory_name / Path(file_name)).replace("\\","/") for file_name in file_name_list]
             self.image_file_lists.append(file_name_list)
 
     def retrieve_position_values (self):
         for csv_dataFile in self.csv_dataFile_lists:
             self.position_x_lists.append(csv_dataFile["Position X(um)"].values)
             self.position_y_lists.append(csv_dataFile["Position Y(um)"].values)
-            
+
+    def retrieve_channel_values (self):
+        for csv_dataFile in self.csv_dataFile_lists:
+            self.channels_lists.append(csv_dataFile["Filter(Ch)"].values)
+
     def retrieve_magnification_values (self):
         for csv_dataFile in self.csv_dataFile_lists:
-            self.magnification_values_lists.append(csv_dataFile["Magnification"].values)
+            self.magnification_lists.append(csv_dataFile["Magnification"].values)
 
     def retrieve_delta_T_values (self):
          
@@ -119,13 +135,14 @@ class MetadataRetriever:
             self.delta_T_lists.append(delta_T_list)
 
 class MetadataSaver:
-    def __init__(self, image_file_list, output_directory, use_stitching, well, position_x_list=[], position_y_list=[], magnification_list=[], 
+    def __init__(self, image_file_list, output_directory, use_stitching, well, channel_list, position_x_list=[], position_y_list=[], magnification_list=[], 
     delta_T_list=[],rows=None, columns=None):
         
-        self.input_image_path_list = []
+        self.input_image_path_list = image_file_list
         self.output_image_path_list = []
         self.xml_path_list = []
         self.well = well
+        self.channel_list = channel_list
 
         self.position_x_list = position_x_list
         self.position_y_list = position_y_list
@@ -138,9 +155,7 @@ class MetadataSaver:
         self.time_counter = 0
 
         for index in range(0,len(image_file_list)):
-            input_file_path = Path(image_file_list[index].replace("\\","/"))
-
-            self.input_image_path_list.append(str(input_file_path))
+            input_file_path = Path(image_file_list[index])
             
             if use_stitching == True:
                 file_name = str(input_file_path.name)
@@ -153,8 +168,8 @@ class MetadataSaver:
             if delta_T_list[index] > 0:
                 self.time_counter += 1
             
-            output_directory = Path(self.output_directory) / Path(str(self.well)) / Path(str(self.time_counter))
-            output_file_path = Path(self.output_directory) / Path(str(self.well)) / Path(str(self.time_counter)) / Path(Path(input_file_path).name)
+            output_directory = Path(self.output_directory) / Path("Well " + str(self.well)) / Path("Channel " + str(self.channel_list[index])) / Path("Time " + str(self.time_counter))
+            output_file_path = Path(self.output_directory) / Path("Well " + str(self.well)) / Path("Channel " + str(self.channel_list[index])) / Path("Time " + str(self.time_counter)) / Path(Path(input_file_path).name)
 
             if not os.path.exists(str(output_directory)):
                 os.makedirs(str(output_directory))

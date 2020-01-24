@@ -69,8 +69,13 @@ use_stitching = tk.BooleanVar()
 stitching_check = tk.Checkbutton(frame, text="Stitching?", variable=use_stitching, onvalue = True, offvalue = False)
 stitching_check.place(relx = 0.5, rely = 0.55, relheight = 0.05, relwidth = 0.30, anchor = "n")
 
-convert_button = tk.Button(frame, text = "Convert Images", command = lambda:metadata_saver(input_directory, output_directory, bf_directory, use_stitching.get()))
-convert_button.place(relx = 0.5, rely = 0.75, relheight = 0.10, relwidth = 0.30, anchor = "n")
+#Channels
+use_channels = tk.BooleanVar()
+channels_check = tk.Checkbutton(frame, text="Multiple Channels?", variable=use_channels, onvalue = True, offvalue = False)
+channels_check.place(relx = 0.5, rely = 0.65, relheight = 0.05, relwidth = 0.30, anchor = "n")
+
+convert_button = tk.Button(frame, text = "Convert Images", command = lambda:metadata_saver(input_directory, output_directory, bf_directory, use_stitching.get(), use_channels.get()))
+convert_button.place(relx = 0.5, rely = 0.80, relheight = 0.10, relwidth = 0.30, anchor = "n")
 
 root.mainloop()
 
