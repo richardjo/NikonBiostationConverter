@@ -11,13 +11,12 @@ import os
 import subprocess
 import numpy as np
 
-#Platform
-#Indicate Mac or Windows
-platform = "Mac"
+#Platform Detector Library
+from sys import platform
 
-if platform == "Mac":
+if platform == "linux" or "linux2" or  "darwin":
     bf_extension = ""
-elif platform == "Windows":
+elif platform == "win32":
     bf_extension = ".bat"
 
 class MetadataRetriever:
@@ -83,7 +82,7 @@ class MetadataRetriever:
             else:
                 self.csv_dataFile_lists.append(pd.read_csv(csv_file, delimiter = "	", encoding = "utf-16", error_bad_lines=False))
     
-    def retrieve_image_file_list (self):
+    def retrieve_image_file_lists (self):
         for index in range(0,len(self.csv_dataFile_lists)):
             csv_dataFile = self.csv_dataFile_lists[index]
             file_name_list = csv_dataFile["File Name"].values

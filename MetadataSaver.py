@@ -4,7 +4,7 @@ def metadata_saver(home_directory, output_directory, bf_tools_directory, use_sti
     rt_metadata = MetadataRetriever()
     rt_metadata.retrieve_files(home_directory, use_channels)
     rt_metadata.csv_formatting(use_stitching)
-    rt_metadata.retrieve_image_file_list()
+    rt_metadata.retrieve_image_file_lists()
     rt_metadata.retrieve_magnification_values()
     rt_metadata.retrieve_delta_T_values()
     rt_metadata.retrieve_position_values()
